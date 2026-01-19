@@ -8,21 +8,21 @@ function Square({value, onSquareClick}){
 }
 
 export default function Board(){
-  const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares]=useState(Array(9).fill(null));
-  
+  const [ct,setCt]=useState(0);
+
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) {
       return;
     }
     const nextSquares = squares.slice();
-    if (xIsNext) {
+    if (ct%2==0) {
       nextSquares[i] = 'X';
     } else {
       nextSquares[i] = 'O';
     }
     setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    setCt(ct+1);
   }
 
 
@@ -30,12 +30,20 @@ export default function Board(){
   let status;
   if (winner) {
     status = 'Winner: ' + winner;
-  } else {
-    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+  } else if(ct==9){
+    status="It's a Tie";
+  }else {
+    status = 'Player: ' + (ct%2==0 ? 'X' : 'O');
+  }
+
+  function newGame(){
+    setSquares(Array(9).fill(null));
+    setCt(0);
   }
 
   return (
     <>
+      <div className="header">Tic-Tac-Toe</div>
       <div className="status">{status}</div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={()=>handleClick(0)}/>
@@ -52,6 +60,7 @@ export default function Board(){
          <Square value={squares[7]} onSquareClick={()=>handleClick(7)}/>
          <Square value={squares[8]} onSquareClick={()=>handleClick(8)}/>
       </div>
+      <button className="new" onClick={newGame}>New Game</button>
     </>
   );
 }
